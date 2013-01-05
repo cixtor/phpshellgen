@@ -1,8 +1,8 @@
 # PHP-Shell Generator
 
-[PHP-Shell Generator](http://www.cixtor.com/phpshell) is a simple web terminal developed using a simple class in `PHP`, `jQuery (1.10.1)` and the plugin `jQuery.Terminal` developed by **Jakub Jankiewicz** at [Terminal.jCubic](http://terminal.jcubic.pl/). This tool was created looking for speed, simplicity flexibility and anonimity, rather than using `r57` or `c99` (the most common php-shell in the world) I prefer to use an interface with only the essential tools and customizable.
+[PHP-Shell Generator](http://www.cixtor.com/phpshell) is a simple web terminal developed using a simple class in `PHP`, `jQuery` and the plugin `jQuery.Terminal` developed by **Jakub Jankiewicz** at [Terminal.jCubic](http://terminal.jcubic.pl/). This tool was created looking for speed, simplicity flexibility and anonimity, rather than using `r57` or `c99` (the most common php-shell in the world) I prefer to use an interface with only the essential tools and customizable.
 
-This project has a pseudo-compiler tool that will let you customize the php-shell, I will add more options and methods when I get more ideas for the development, at this moment you can customize the `username` and `password` used to log into the shell, the `filename` of the compiled file and the default `shell interpreter` used to execute the commands switching between system (shell_exec, passthru, exec, etc...).
+This project has a pseudo-compiler tool that will let you customize the php-shell, I will add more options and methods when I get more ideas for the development, at this moment you can customize the `username` and `password` used to log into the shell, the `filename` of the compiled file and the default `shell interpreter` used to execute the commands switching between the functions `system, shell_exec, passthru, exec`.
 
 Also in the compiled php-shell you will have some methods to change the interpreter once you are logged in to be flexible when you are executing commands, and a way to dynamically change the current working directory using sessions instead of GET parameters.
 
