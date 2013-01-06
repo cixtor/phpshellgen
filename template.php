@@ -10,7 +10,7 @@ class Shell{
 			'interpreter'=>'shell_exec',
 			'current_user'=>get_current_user(),
 			'hostname'=>function_exists('gethostname')?gethostname():$_SERVER['HTTP_HOST'],
-			'server_address'=>$_SERVER['SERVER_ADDR'],
+			'server_address'=>isset($_SERVER['SERVER_ADDR'])?$_SERVER['SERVER_ADDR']:'127.0.0.1',
 			'server_port'=>$_SERVER['SERVER_PORT'],
 			'request_time'=>$_SERVER['REQUEST_TIME'],
 			'php_owner_uid'=>getmyuid(),
@@ -85,12 +85,23 @@ class Shell{
 				session_destroy();
 				echo 'location.reload';
 			}else{
+				$output = $result = NULL;
 				$interpreter = $this->config['interpreter'];
-				$output = call_user_func($interpreter, $command);
 				switch($interpreter){
-					case 'shell_exec':
 					case 'exec':
-						echo $output;
+						try{
+							exec($command, $output, $result);
+							foreach($output as $output_line){
+								echo "{$output_line}\n";
+							}
+						}catch(Exception $e){
+							echo 'Caught exception: '.$e->getMessage();
+						}
+						break;
+					case 'shell_exec':
+					default:
+						$output = call_user_func($interpreter, $command);
+						if( $interpreter=='shell_exec' ){ echo $output; }
 						break;
 					default: break;
 				}
