@@ -43,7 +43,7 @@ def get_jquery_terminal
 end
 def get_template(config)
 	if config[:input].nil? then
-		puts "    Downloading official \e[0;93mcixtor/phpshellgen\e[0m template"
+		puts "    Downloading official \e[0;93mcixtor/phpshellgen\e[0m repository template"
 		config[:input] = 'https://raw.github.com/cixtor/phpshellgen/master/template.php'
 		request = open(config[:input])
 		request.read
