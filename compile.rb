@@ -68,7 +68,7 @@ config = {
 }
 options = GetoptLong.new(
 	[ '--input', '-i', GetoptLong::OPTIONAL_ARGUMENT ],
-	[ '--output', '-o', GetoptLong::REQUIRED_ARGUMENT ],
+	[ '--output', '-o', GetoptLong::OPTIONAL_ARGUMENT ],
 	[ '--shell', '-s', GetoptLong::OPTIONAL_ARGUMENT ],
 	[ '--username', '-u', GetoptLong::OPTIONAL_ARGUMENT ],
 	[ '--password', '-p', GetoptLong::OPTIONAL_ARGUMENT ],
@@ -97,7 +97,7 @@ begin
 		end
 	end
 rescue GetoptLong::InvalidOption => e
-	puts 0
+	usage
 end
 #
 header
