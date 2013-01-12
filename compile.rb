@@ -5,29 +5,31 @@ require 'digest/sha1'
 require 'open-uri'
 #
 def header
-	puts "PHP-Shell Generator"
-	puts "http://www.cixtor.com/phpshell"
-	puts "https://github.com/cixtor/phpshellgen"
+	puts 'PHP-Shell Generator'
+	puts 'http://www.cixtor.com/phpshell'
+	puts 'https://github.com/cixtor/phpshellgen'
 	puts
 end
 def usage
 	header
-	puts "Options:"
-	puts "  -h | --help     = Print this message with the list of available options."
-	puts "  -i | --input    = Specify the shell template to use in compilation. Default: official cixtor/phpshellgen repository"
-	puts "  -o | --output   = Specify the filename of the output (you should specify the extension too)."
-	puts "  -s | --shell    = Specify the default interpreter to use, you can chage this using the method 'set_interpreter(shell_exec)' once you are logged in."
-	puts "  -u | --username = Specify the username to log into the php-shell, if you are not authenticated the shell will responde with a '404 Not Found'."
-	puts "  -p | --password = Specify the password to log into the php-shell."
-	puts "  -l | --lint     = Enable the check of the php-shell using the linter utility of PHP."
-	puts "Methods:"
-	puts "  set_interpreter = Change the default interpreter used in the compiled php-shell: set_interpreter(shell_exec)"
-	puts "  logout          = Destroy the current session and display the 'Not Found' message."
-	puts "  cd 'path'       = Change the current working directory and store this value in session to stay present while you execute other commands."
-	puts "Usage:"
-	puts "  ./compile.rb -i template.php -o shell.php"
-	puts "  ./compile.rb -i template.php -s 'shell_exec'"
-	puts "  ./compile.rb -i template.php -o shell.php -u 'USERNAME' -p 'PASSWORD'"
+	puts 'Parameters:'
+	puts '  -h | --help      | Print this message with the list of available options.'
+	puts '  -i | --input     | Specify the shell template to compile.'
+	puts '  -o | --output    | Specify the filename for the compiled shell.'
+	puts '  -s | --shell     | Specify the default PHP interpreter.'
+	puts '  -u | --username  | Specify the username to log into the php-shell.'
+	puts '  -p | --password  | Specify the password to log into the php-shell.'
+	puts '  -l | --lint      | Enable the PHP linter on the compiled shell.'
+	puts
+	puts 'Methods:'
+	puts '  set_interpreter  | Set the default PHP interpreter: set_interpreter(shell_exec)'
+	puts '  logout           | Close the current shell session.'
+	puts '  cd "folder/path" | Change the current working directory.'
+	puts
+	puts 'Usage:'
+	puts '  ./compile.rb -i template.php -o shell.php'
+	puts '  ./compile.rb -i template.php -s shell_exec'
+	puts '  ./compile.rb -i template.php -o shell.php -u USERNAME -p PASSWORD'
 	exit
 end
 def get_jquery
