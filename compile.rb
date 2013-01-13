@@ -126,7 +126,7 @@ template.each_line do |line|
 		puts "    Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
 		output.write("'interpreter'=>'#{config[:shell]}',")
 	elsif match = line.match(/(class Shell\{)/) or match = line.match(/(new Shell\(\))/) then
-		output.write(match[1].gsub('Shell', config[:class_name]))
+		output.write(line.gsub('Shell', config[:class_name]))
 	elsif line.match(/<script type="text\/javascript" src="jquery.min.js"><\/script>/) then
 		puts "    Adding jQuery support."
 		output.write("<script type='text/javascript'>")
