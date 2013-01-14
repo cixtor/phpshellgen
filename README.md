@@ -39,6 +39,7 @@ You can find the login form pressing one time the key `TAB`, this will guide you
 | Method             | Description                                                    |
 | ------------------ | -------------------------------------------------------------- |
 | `set_interpreter`  | Set the default PHP interpreter: `set_interpreter(shell_exec)` |
+| `get_interpreter`  | Get the current PHP interpreter: `get_interpreter`             |
 | `logout`           | Close the current shell session.                               |
 | `cd 'folder/path'` | Change the current working directory.                          |
 
