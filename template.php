@@ -66,16 +66,16 @@ class Shell{
 			if( preg_match('/^set_interpreter\((.*)\)$/', $command, $match) ){
 				$interpreter = $match[1];
 				$disabled_functions = $this->disabled_functions();
-				if( function_exists($interpreter) ){
-					if( in_array($interpreter, $disabled_functions) ){
-						echo "Error. Function '{$interpreter}' is blocked by php.ini";
-					}else{
+				if( in_array($interpreter, $disabled_functions) ){
+					echo "Error. Function '{$interpreter}' is blocked by php.ini";
+				}else{
+					if( function_exists($interpreter) ){
 						$_SESSION['interpreter'] = $interpreter;
 						$this->config['interpreter'] = $interpreter;
 						echo "Success. Function '{$interpreter}' was set correctly.";
+					}else{
+						echo "Error. Function '{$interpreter}' does not exists.";
 					}
-				}else{
-					echo "Error. Function '{$interpreter}' does not exists.";
 				}
 			}elseif( preg_match('/^get_interpreter$/', $command) ){
 				echo "Current interpreter set as: {$this->config['interpreter']}";
