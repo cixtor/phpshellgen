@@ -113,7 +113,6 @@ class Shell{
 						$output = call_user_func($interpreter, $command);
 						if( $interpreter=='shell_exec' ){ echo $output; }
 						break;
-					default: break;
 				}
 			}
 		}
