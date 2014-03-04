@@ -6,7 +6,7 @@ require 'open-uri'
 #
 def header
 	puts 'PHP-Shell Generator'
-	puts 'http://www.cixtor.com/phpshell'
+	puts 'http://cixtor.com/phpshell'
 	puts 'https://github.com/cixtor/phpshellgen'
 	puts
 end
@@ -34,12 +34,10 @@ def usage
 end
 def get_jquery
 	# request = open('http://code.jquery.com/jquery.min.js')
-	# request = open('http://www.cixtor.com/assets/jquery.min.js')
 	request = open('https://raw.github.com/cixtor/phpshellgen/master/jquery.min.js')
 	request.read
 end
 def get_jquery_terminal
-	# request = open('http://www.cixtor.com/assets/jquery.terminal.min.js')
 	request = open('https://raw.github.com/cixtor/phpshellgen/master/jquery.terminal.min.js')
 	request.read
 end
@@ -128,14 +126,14 @@ template.each_line do |line|
 	elsif match = line.match(/(class Shell\{)/) or match = line.match(/(new Shell\(\))/) then
 		output.write(line.gsub('Shell', config[:class_name]))
 	elsif line.match(/<script type="text\/javascript" src="jquery.min.js"><\/script>/) then
-		puts "    Adding jQuery support."
+		puts "    Adding jQuery support"
 		output.write("<script type='text/javascript'>")
 		output.write(get_jquery)
 		output.write("</script>")
 	elsif line.match(/^<\?php$/) then
 		output.write("<?php ")
 	elsif line.match(/<script type="text\/javascript" src="jquery.terminal.min.js"><\/script>/) then
-		puts "    Adding jQuery.Terminal support."
+		puts "    Adding jQuery.Terminal support"
 		output.write("<script type='text/javascript'>")
 		output.write(get_jquery_terminal)
 		output.write("</script>")
