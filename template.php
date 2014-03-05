@@ -111,7 +111,8 @@ class Shell{
 					case 'shell_exec':
 					default:
 						$output = call_user_func($interpreter, $command);
-						if( $interpreter=='shell_exec' ){ echo $output; }
+						if( $output == null ){ printf("Cannot execute this command: %s\n", $command); }
+						else if( $interpreter=='shell_exec' ){ echo $output; }
 						break;
 				}
 			}
