@@ -110,6 +110,7 @@ class Shell{
 			}else{
 				$output = NULL;
 				$result = NULL;
+				$capture_buffer = FALSE;
 				$interpreter = $this->config['interpreter'];
 				if( $interpreter == 'passthru' ){ $capture_buffer = TRUE; }
 				switch($interpreter){
@@ -123,7 +124,12 @@ class Shell{
 						break;
 					case 'shell_exec':
 					default:
+						if( $capture_buffer ){ ob_start(); }
 						$output = call_user_func($interpreter, $command);
+						if( $capture_buffer ){
+							$output = ob_get_contents();
+							ob_end_clean();
+						}
 						if( $output == null ){
 							$output = sprintf("Cannot execute this command: %s\n", $command);
 						}
