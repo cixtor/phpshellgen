@@ -29,7 +29,7 @@ class Shell{
 	}
 	public function get_prompt(){
 		$prompt = sprintf(
-			'%s@%s [%s] %s :) $ ',
+			'%s@%s [%s] %s $ ',
 			$this->config['current_user'],
 			$this->config['hostname'],
 			date('Y/m/d H:i'),
@@ -70,10 +70,10 @@ class Shell{
 		if( $this->is_ajax_request() ){
 			$interpreter = $this->config['interpreter'];
 			$command = $this->request('command');
-			echo json_encode(array(
-				'prompt' => $this->get_prompt(),
-				'output' => $this->execute($command)
-			));
+			$data_set = array();
+			$data_set['output'] = $this->execute($command);
+			$data_set['prompt'] = $this->get_prompt();
+			print(json_encode($data_set));
 			exit;
 		}
 	}
@@ -102,6 +102,7 @@ class Shell{
 				return sprintf('PHP version is: %s', PHP_VERSION);
 			}elseif( preg_match('/^cd (.*)/', $command, $match) ){
 				$_SESSION['cwd'] = realpath($match[1]);
+				$this->config['cwd'] = $_SESSION['cwd'];
 				return sprintf('Changed directory to: %s', $_SESSION['cwd']);
 			}elseif( preg_match('/^(logout|exit)$/', $command) ){
 				$_SESSION['authenticated'] = 0;
