@@ -108,6 +108,15 @@ class Shell{
 				$_SESSION['authenticated'] = 0;
 				session_destroy();
 				return 'location.reload';
+			}elseif( $command == 'status' ){
+				$output_str = '';
+				$output_tpl = "Array (\n%s\n)";
+				foreach( $this->config as $config_name=>$config_value ){
+					$output_str .= sprintf("  %s => %s\n", $config_name, $config_value);
+				}
+				$output_str = rtrim($output_str, "\n");
+				$output = sprintf($output_tpl, $output_str);
+				return $output;
 			}else{
 				$output = NULL;
 				$result = NULL;

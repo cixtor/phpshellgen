@@ -43,6 +43,7 @@ You can find the login form pressing one time the key `TAB`, this will guide you
 | `get_disabled_functions`  | Get the list of functions disabled through a `php.ini` file    |
 | `get_php_version`         | Get the version of the PHP interpreter in execution time       |
 | `logout`                  | Close the current shell session.                               |
+| `status`                  | Display all the configuration variables.                       |
 | `cd 'folder/path'`        | Change the current working directory.                          |
 
 ### Usage
