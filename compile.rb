@@ -22,9 +22,13 @@ def usage
 	puts '  -l | --lint      | Enable the PHP linter on the compiled shell.'
 	puts
 	puts 'Methods:'
-	puts '  set_interpreter  | Set the default PHP interpreter: set_interpreter(shell_exec)'
-	puts '  logout           | Close the current shell session.'
-	puts '  cd "folder/path" | Change the current working directory.'
+	puts '  set_interpreter        | Set the PHP shell interpreter: set_interpreter(shell_exec)'
+	puts '  get_interpreter        | Get the current PHP shell interpreter.'
+	puts '  get_disabled_functions | Get the list of functions disabled through a "php.ini" file.'
+	puts '  get_php_version        | Get the version of the PHP interpreter in execution time.'
+	puts '  logout                 | Close the current shell session.'
+	puts '  status                 | Display all the configuration variables.'
+	puts '  cd new/folder/path/    | Change the current working directory.'
 	puts
 	puts 'Usage:'
 	puts '  ./compile.rb -i template.php -o shell.php'

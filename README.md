@@ -29,7 +29,7 @@ You can find the login form pressing one time the key `TAB`, this will guide you
 | `-h / --help`     | Print this message with the list of available options. |                                                 |
 | `-i / --input`    | Specify the shell template to compile.                 | Official `cixtor/phpshellgen` repository        |
 | `-o / --output`   | Specify the filename for the compiled shell.           | `cixtor.phpshellgen.php`                        |
-| `-s / --shell`    | Specify the default PHP interpreter.                   | Modificable through `set_interpreter(passthru)` |
+| `-s / --shell`    | Specify the default PHP shell interpreter.             | Modificable through `set_interpreter(passthru)` |
 | `-u / --username` | Specify the username to log into the php-shell.        | `cixtor`                                        |
 | `-p / --password` | Specify the password to log into the php-shell.        | `98ogHDPcPU`                                    |
 | `-l / --lint`     | Enable the PHP linter on the compiled shell.           | `False`                                         |
@@ -38,13 +38,13 @@ You can find the login form pressing one time the key `TAB`, this will guide you
 
 | Method                    | Description                                                    |
 | ------------------------- | -------------------------------------------------------------- |
-| `set_interpreter`         | Set the default PHP interpreter: `set_interpreter(shell_exec)` |
-| `get_interpreter`         | Get the current PHP interpreter                                |
-| `get_disabled_functions`  | Get the list of functions disabled through a `php.ini` file    |
-| `get_php_version`         | Get the version of the PHP interpreter in execution time       |
+| `set_interpreter`         | Set the PHP shell interpreter: `set_interpreter(shell_exec)`   |
+| `get_interpreter`         | Get the current PHP shell interpreter.                         |
+| `get_disabled_functions`  | Get the list of functions disabled through a `php.ini` file.   |
+| `get_php_version`         | Get the version of the PHP interpreter in execution time.      |
 | `logout`                  | Close the current shell session.                               |
 | `status`                  | Display all the configuration variables.                       |
-| `cd 'folder/path'`        | Change the current working directory.                          |
+| `cd new/folder/path/`     | Change the current working directory.                          |
 
 ### Usage
 
