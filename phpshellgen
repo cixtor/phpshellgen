@@ -142,7 +142,16 @@ template.each_line do |line|
         output.write(get_jquery_terminal)
         output.write("</script>")
     else
-        line = line.gsub("\t",'')
+        line = line.gsub('    ', '')
+        line = line.gsub(' => ', '=>')
+        line = line.gsub('each( ', 'each(')
+        line = line.gsub('if( ', 'if(')
+        line = line.gsub(' ){', '){')
+        line = line.gsub(' == ', '==')
+        line = line.gsub(' = ', '=')
+        line = line.gsub('return ( ', 'return(')
+        line = line.gsub(' ? ', '?')
+        line = line.gsub(' : ', ':')
         output.write(line)
     end
 end
