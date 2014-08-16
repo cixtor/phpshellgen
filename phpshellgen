@@ -46,9 +46,11 @@ def usage
     puts '  cd new/folder/path/    | Change the current working directory.'
     puts
     puts 'Usage:'
-    puts '  ./compile.rb -i template.php -o shell.php'
-    puts '  ./compile.rb -i template.php -s shell_exec'
-    puts '  ./compile.rb -i template.php -o shell.php -u USERNAME -p PASSWORD'
+    puts '  phpshellgen'
+    puts '  phpshellgen -o /output/here/shell.php'
+    puts '  phpshellgen -i /path/to/template.php'
+    puts '  phpshellgen -s shell_exec'
+    puts '  phpshellgen -u USERNAME -p PASSWORD'
     exit
 end
 
@@ -84,7 +86,7 @@ end
 
 config = {
     :input => nil,
-    :output => 'cixtor.phpshellgen.php',
+    :output => random_string(10) + '.php',
     :shell => 'passthru',
     :username => 'cixtor',
     :password => random_string(10),
