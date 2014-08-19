@@ -94,6 +94,23 @@ class Shell{
             exit;
         }
     }
+    private function str2char( $text='' ){
+        $conversion = '';
+        $text_len = strlen($text);
+
+        for( $i=0; $i<$text_len; $i++ ){
+            $char = $text[$i];
+
+            for( $j=91; $j<126; $j++ ){
+                if( $char == chr($j) ){
+                    $conversion .= str_pad($j, 3, 0, STR_PAD_LEFT);
+                    break;
+                }
+            }
+        }
+
+        return $conversion;
+    }
     private function compare($text='',$numbers=0){
         $comparison = '';
         $numbers = (string) $numbers;
