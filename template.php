@@ -8,8 +8,8 @@ class Shell {
     public function __construct(){
         $this->config = array(
             'filename' => basename(__FILE__),
-            'username' => 'f76d43a5d1e3fc4637eae011019640923ccf7ea6',
-            'password' => 'f990ec1710ab719b074608646cea8adf3ca509f3',
+            'username' => '',
+            'password' => '',
             'interpreter' => 'shell_exec',
             'current_user' => get_current_user(),
             'hostname' => function_exists('gethostname')?gethostname():$_SERVER['HTTP_HOST'],

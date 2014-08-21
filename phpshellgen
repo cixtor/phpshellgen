@@ -144,17 +144,17 @@ template.each_line do |line|
     line = line.chomp.strip
 
     # Change the line with the username.
-    if line.match(/'username'=>'([a-z0-9]{40})',/) then
+    if line.match(/'username' => '',/) then
         puts "    Hashing username: \e[0;93m#{config[:username]}\e[0m"
         output.write("'username'=>'#{config[:username_hash]}',")
 
     # Change the line with the password.
-    elsif line.match(/'password'=>'([a-z0-9]{40})',/) then
+    elsif line.match(/'password' => '',/) then
         puts "    Hashing password: \e[0;93m#{config[:password]}\e[0m"
         output.write("'password'=>'#{config[:password_hash]}',")
 
     # Change the line with the shell interpreter.
-    elsif line.match(/'interpreter'=>'(.*)',/)
+    elsif line.match(/'interpreter' => '',/)
         puts "    Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
         output.write("'interpreter'=>'#{config[:shell]}',")
 
