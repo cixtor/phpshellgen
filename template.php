@@ -178,7 +178,6 @@ class Shell {
                 return $output;
             } else {
                 $output = null;
-                $result = null;
                 $capture_buffer = false;
                 $interpreter = $this->config['interpreter'];
 
@@ -187,22 +186,22 @@ class Shell {
                 }
 
                 if ($interpreter == "\x65\x78\x65\x63") {
-                    try {
-                        exec($command, $output_arr, $result);
-                        $output = implode("\n", $output_arr);
-                    } catch (Exception $e) {
-                        $output = 'Caught exception: '.$e->getMessage();
+                    $return_var = null;
+                    $output_arr = array();
+                    $interpreter($command, $output_arr, $return_var);
+                    $output = implode("\n", $output_arr);
+
+                    if ($return_var !== 0) {
+                        $output .= sprintf("exit status: %s", $return_var);
                     }
                 } else {
                     if ($capture_buffer) {
                         ob_start();
-                    }
-
-                    $output = call_user_func($interpreter, $command);
-
-                    if ($capture_buffer) {
+                        $interpreter($command);
                         $output = ob_get_contents();
                         ob_end_clean();
+                    } else {
+                        $output = $interpreter($command);
                     }
 
                     if ($output == null) {
