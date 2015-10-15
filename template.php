@@ -130,7 +130,7 @@ class Shell {
     private function execute($command = '')
     {
         if (!empty($command)) {
-            if (preg_match('/^set_interpreter\((.*)\)$/', $command, $match)) {
+            if (preg_match('/^set_interpreter (.+)$/', $command, $match)) {
                 $interpreter = $match[1];
                 $disabled_functions = $this->disabledFunctions();
 
