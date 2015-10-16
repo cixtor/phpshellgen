@@ -156,9 +156,16 @@ class Shell {
                 );
             } elseif (preg_match('/^(get_php_version|php_version)$/', $command)) {
                 return sprintf('PHP version is: %s', PHP_VERSION);
-            } elseif (preg_match('/^cd (.*)/', $command, $match)) {
-                $_SESSION['cwd'] = realpath($match[1]);
-                $this->config['cwd'] = $_SESSION['cwd'];
+            } elseif (preg_match('/^cd (.+)/', $command, $match)) {
+                if ($match[1] === '~') {
+                    $directory = getenv('HOME');
+                } else {
+                    $directory = realpath($match[1]);
+                }
+
+                $_SESSION['cwd'] = $directory;
+                $this->config['cwd'] = $directory;
+
                 return sprintf('Changed directory to: %s', $_SESSION['cwd']);
             } elseif (preg_match('/^(logout|exit)$/', $command)) {
                 $_SESSION['authenticated'] = 0;
