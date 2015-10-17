@@ -39,7 +39,10 @@ class Shell {
             $this->config['interpreter'] = $_SESSION['interpreter'];
         }
 
-        if (isset($_SESSION['cwd']) && $_SESSION['cwd'] != $this->config['cwd']) {
+        if (isset($_SESSION['cwd'])
+            && $_SESSION['cwd'] !== $this->config['cwd']
+            && !empty($_SESSION['cwd'])
+        ) {
             chdir($_SESSION['cwd']);
             $this->config['cwd'] = getcwd();
         }
