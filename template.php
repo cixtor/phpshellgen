@@ -166,10 +166,14 @@ class Shell {
                     $directory = realpath($match[1]);
                 }
 
-                $_SESSION['cwd'] = $directory;
-                $this->config['cwd'] = $directory;
+                if (file_exists($directory) && is_dir($directory)) {
+                    $_SESSION['cwd'] = $directory;
+                    $this->config['cwd'] = $directory;
 
-                return sprintf('Changed directory to: %s', $_SESSION['cwd']);
+                    return sprintf('Changed directory to: %s', $_SESSION['cwd']);
+                } else {
+                    return 'Directory does not exists';
+                }
             } elseif (preg_match('/^(logout|exit)$/', $command)) {
                 $_SESSION['authenticated'] = 0;
                 session_destroy();
