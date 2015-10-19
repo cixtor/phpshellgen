@@ -148,16 +148,18 @@ class Shell {
                         return sprintf('Error. Function "%s" does not exists.', $interpreter);
                     }
                 }
-            } elseif (preg_match('/^get_interpreter$/', $command)) {
+            } elseif (preg_match('/^(get_)?interpreter$/', $command)) {
                 return sprintf('Current interpreter set as: %s', $this->config['interpreter']);
-            } elseif (preg_match('/^get_disabled_functions$/', $command)) {
+            } elseif (preg_match('/^(get_)?disabled_functions$/', $command)) {
                 $disabled_functions = $this->disabledFunctions();
+                $disabled_str = implode(",\x20", $disabled_functions);
 
-                return sprintf(
-                    'Disabled native functions: %s',
-                    implode(",\x20", $disabled_functions)
-                );
-            } elseif (preg_match('/^(get_php_version|php_version)$/', $command)) {
+                if (empty($disabled_str)) {
+                    $disabled_str = '(empty)';
+                }
+
+                return sprintf('Disabled native functions: %s', $disabled_str);
+            } elseif (preg_match('/^(get_)?php_version$/', $command)) {
                 return sprintf('PHP version is: %s', PHP_VERSION);
             } elseif (preg_match('/^cd (.+)/', $command, $match)) {
                 if ($match[1] === '~') {
