@@ -22,6 +22,7 @@ def header
     puts 'PHP-Shell Generator'
     puts 'http://cixtor.com/phpshell'
     puts 'https://github.com/cixtor/phpshellgen'
+    puts 'https://en.wikipedia.org/wiki/Backdoor_Shell'
     puts
 end
 
@@ -180,20 +181,25 @@ template.each_line do |line|
 
     # Minify the rest of the code.
     else
-        line = line.gsub(/[ ]{4}/, '')
-        line = line.gsub(/ => /, '=>')
-        line = line.gsub(/each\( /, 'each(')
-        line = line.gsub(/if\( /, 'if(')
-        line = line.gsub(/switch\( /, 'switch(')
-        line = line.gsub(/\} else \{/, '}else{')
-        line = line.gsub(/\} elseif\( /, '} elseif(')
-        line = line.gsub(/ \)\{/, '){')
-        line = line.gsub(/ \{/, '{')
-        line = line.gsub(/ == /, '==')
-        line = line.gsub(/ = /, '=')
-        line = line.gsub(/return \( /, 'return(')
-        line = line.gsub(/ \? /, '?')
-        line = line.gsub(/ : /, ':')
+        line = line.gsub(/\t/, "\x20\x20\x20\x20")
+        line = line.gsub(/(if|each|switch|return)\s\(/, '\1(')
+        line = line.gsub(/\}\selse/, '}else')
+        line = line.gsub(/\s+\|\|/, '||')
+        line = line.gsub(/\|\|\s+/, '||')
+        line = line.gsub(/\s+&&/, '&&')
+        line = line.gsub(/&&\s+/, '&&')
+        line = line.gsub(/=>\s+/, '=>')
+        line = line.gsub(/\?\s+/, '?')
+        line = line.gsub(/\s+\?/, '?')
+        line = line.gsub(/\s+=/, '=')
+        line = line.gsub(/=\s+/, '=')
+        line = line.gsub(/\s+:/, ':')
+        line = line.gsub(/:\s+/, ':')
+        line = line.gsub(/\s\{/, '{')
+        line = line.gsub(/\s\!/, '!')
+        line = line.gsub(/,\s\$/, ',$')
+        line = line.gsub(/\s\.=/, '.=')
+        line = line.gsub(/\s{4}/, '')
 
         # Append if not empty.
         if not line.empty? then
