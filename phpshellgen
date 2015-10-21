@@ -156,8 +156,11 @@ template.each_line do |line|
 
     # Change the line with the shell interpreter.
     elsif line.match(/'interpreter' => '',/)
+        hashed_func = ""
+        config[:shell].split(//).map { |c| hashed_func += sprintf("\\x%02.x", c.ord) }
         puts "    Settings default interpreter: \e[0;93m#{config[:shell]}\e[0m"
-        output.write("'interpreter'=>'#{config[:shell]}',")
+        puts "    Settings default interpreter: \e[0;93m#{hashed_func}\e[0m"
+        output.write("'interpreter'=>\"#{hashed_func}\",")
 
     # Change the line with the class name.
     elsif line.match(/class Shell \{/) or line.match(/(new Shell\(\))/) then
@@ -186,19 +189,17 @@ template.each_line do |line|
         line = line.gsub(/\}\selse/, '}else')
         line = line.gsub(/\s+\|\|/, '||')
         line = line.gsub(/\|\|\s+/, '||')
+        line = line.gsub(/\s+\?\s+/, '?')
+        line = line.gsub(/\s+:\s+/, ':')
         line = line.gsub(/\s+&&/, '&&')
         line = line.gsub(/&&\s+/, '&&')
         line = line.gsub(/=>\s+/, '=>')
-        line = line.gsub(/\?\s+/, '?')
-        line = line.gsub(/\s+\?/, '?')
-        line = line.gsub(/\s+=/, '=')
-        line = line.gsub(/=\s+/, '=')
-        line = line.gsub(/\s+:/, ':')
-        line = line.gsub(/:\s+/, ':')
-        line = line.gsub(/\s\{/, '{')
-        line = line.gsub(/\s\!/, '!')
         line = line.gsub(/,\s\$/, ',$')
         line = line.gsub(/\s\.=/, '.=')
+        line = line.gsub(/\s+=/, '=')
+        line = line.gsub(/=\s+/, '=')
+        line = line.gsub(/\s\{/, '{')
+        line = line.gsub(/\s\!/, '!')
         line = line.gsub(/\s{4}/, '')
 
         # Append if not empty.

