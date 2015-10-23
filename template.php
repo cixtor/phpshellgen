@@ -296,7 +296,7 @@ if (!empty($_POST)
                 data: { action:'execute', command:command },
                 cache: false,
                 success: function(data, textStatus, jqXHR){
-                    if (data=='location.reload') {
+                    if (data.output === 'location.reload') {
                         window.location.reload();
                     } else {
                         term.set_prompt(data.prompt);
