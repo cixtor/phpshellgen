@@ -1,45 +1,50 @@
 # PHP-Shell Generator
 
-Simple web terminal developed using `PHP` and the `jcubic/jquery.terminal` library. This tool was created looking for speed, simplicity, flexibility and anonymity, rather than using `r57` or `c99` I prefer to use an interface with only the essential tools and customizable.
+Minimalistic [web shell](https://en.wikipedia.org/wiki/Web_shell) written in PHP and [jQuery.Terminal](https://github.com/jcubic/jquery.terminal). The purpose of this tool is to serve as an alternative to popular web shells like [r57](https://www.google.com/search?q=r57+shell) and [c99](https://www.google.com/search?q=c99+shell) but with a minimalistic user interface with focus on the essential tools like a command line interface and access to system programs as well as alternatives when such programs are unavailable.
 
-This project has a build tool to allow the customization of the shell, at this moment you can customize the `username` and `password` used to log into the shell, the `filename` of the compiled file and the default shell interpreter used to execute the commands switching between valid PHP shell functions.
+<div style="text-align:center">
+<img src="http://cixtor.com/uploads/phpshell-generator-4.png">
+</div>
 
-Also, in the generated shell you will have some methods to change the interpreter once you are logged in to be flexible when you are executing commands, and a way to dynamically change the current working directory using sessions instead of GET parameters.
+## Options
 
-![cixtor phpshellgen example](http://cixtor.com/uploads/phpshell-generator-4.png)
+| Parameters | Name | Description |
+|------------|------|-------------|
+| `-h` | Help | Prints this message with a list of available options |
+| `-i` | Input | Specifies the file to serve as a template to generate the web shell (default "template.txt") |
+| `-o` | Output | Specifies the filename for the generated web shell (default `<random>.php`) |
+| `-s` | Shell | Specifies the PHP function to execute Unix commands (default "passthru") |
+| `-u` | Username | Specifies the username to restrict access to a limit set of users |
+| `-p` | Password | Specifies the password to restrict access to a limit set of users |
+| `-l` | Lint | Double-checks the consistency of the PHP code in generated file |
 
-### Options
+## Methods
 
-| Parameters        | Description                                            |
-| ----------------- | ------------------------------------------------------ |
-| `-h \ --help`     | Print this message with the list of available options. |
-| `-i \ --input`    | Specify the shell template to compile.                 |
-| `-o \ --output`   | Specify the filename for the compiled shell.           |
-| `-s \ --shell`    | Specify the default PHP interpreter.                   |
-| `-u \ --username` | Specify the username to log into the php-shell.        |
-| `-p \ --password` | Specify the password to log into the php-shell.        |
-| `-l \ --lint`     | Enable the PHP linter on the compiled shell.           |
+| Method | Description |
+|--------|-------------|
+| `set_interpreter` | Sets the PHP function to execute commands, e.g. `set_interpreter shell_exec` |
+| `get_interpreter` | Prints the current PHP function acting as the interpreter |
+| `interpreter` | Alias for `get_interpreter` |
+| `get_disabled_functions` | Prints a list of disabled PHP functions to identify which shell functions are available |
+| `disabled_functions` | Alias for `get_disabled_functions` |
+| `get_php_version` | Prints the PHP version |
+| `php_version` | Alias for `get_php_version` |
+| `cd` | Changes directories using `chdir`, e.g. `cd /var/log/` |
+| `logout` | Terminates the user session and reloads the page |
+| `exit` | Alias for `logout` |
+| `status` | Prints the web shell configuration |
+| `clear` | Resets the screen |
 
-### Methods
+## Generator
 
-| Method                   | Description                                                  |
-| ------------------------ | ------------------------------------------------------------ |
-| `set_interpreter`        | Set the PHP shell interpreter: `set_interpreter(shell_exec)` |
-| `get_interpreter`        | Get the current PHP shell interpreter.                       |
-| `get_disabled_functions` | Get the list of functions disabled through a `php.ini` file. |
-| `get_php_version`        | Get the version of the PHP interpreter in execution time.    |
-| `logout`                 | Close the current shell session.                             |
-| `status`                 | Display all the configuration variables.                     |
-| `cd new/folder/path/`    | Change the current working directory.                        |
+The process consists basically in replace some lines of the template with the customizable data provided by the tool like the password or the shell interpreter, adding dependencies to implement the web terminal interface, reducing the tabular characters and new lines to finally get a shell of more or less `130KiB`.
 
-### Compilation
-
-The process consists basically in replace some lines of the template with the customizable data provided by the tool like the password or the shell interpreter, adding dependencies to implement the web terminal interface, reducing the tabular characters and new lines to finally get a shell of more or less `130K`.
+**Note:** The shell generator was rewritten from Ruby to PHP for simplicity.
 
 ![compilation](http://cixtor.com/uploads/phpshell-generator-1.png)
 
-### 404 Not Found
+## 404 Not Found
 
-When the shell is loaded you will see a page saying that the file was not found in the server, and even if you send a `HEAD` request to the URL where the shell was uploaded, you will see the HTTP status `404 Not Found`. Hit the tabulator key to place the cursor in the first field of the form that you will use to authenticate yourself.
+To attempt to hide the web shell in the web server a little bit, the generated PHP file returns a "404 Not Found" status code on GET and HEAD requests when the user session is not set yet. When you access the PHP file in a web browser, press the `<Tab>` key to jump to the first form field and type the username, press `<Tab>` one more time to type the password, and then hit the `<Return>` key to submit the form and log in. If the credentials are correct, the web shell will create a session that will remain until you type `logout` or `exit`.
 
 ![not_found](http://cixtor.com/uploads/phpshell-generator-2.png)
