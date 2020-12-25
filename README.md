@@ -18,10 +18,10 @@ Minimalistic [web shell](https://en.wikipedia.org/wiki/Web_shell) written in PHP
 | `-p` | Password | Specifies the password to restrict access to a limit set of users |
 | `-l` | Lint | Double-checks the consistency of the PHP code in generated file |
 
-## Methods
+## Commands
 
-| Method | Description |
-|--------|-------------|
+| Command | Description |
+|---------|-------------|
 | `set_interpreter` | Sets the PHP function to execute commands, e.g. `set_interpreter shell_exec` |
 | `get_interpreter` | Prints the current PHP function acting as the interpreter |
 | `interpreter` | Alias for `get_interpreter` |

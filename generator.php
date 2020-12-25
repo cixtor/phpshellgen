@@ -21,23 +21,29 @@ function _header()
 function _usage()
 {
     _header();
-    printf("Parameters:\n");
-    printf("  -h | --help      | Print this message with the list of available options.\n");
-    printf("  -i | --input     | Specify the shell template to compile.\n");
-    printf("  -o | --output    | Specify the filename for the compiled shell.\n");
-    printf("  -s | --shell     | Specify the default PHP interpreter.\n");
-    printf("  -u | --username  | Specify the username to log into the php-shell.\n");
-    printf("  -p | --password  | Specify the password to log into the php-shell.\n");
-    printf("  -l | --lint      | Enable the PHP linter on the compiled shell.\n");
+    printf("Options:\n");
+
+    printf("  -h  Prints this message with a list of available options\n");
+    printf("  -i  Specifies the file to serve as a template to generate the web shell (default \"template.txt\")\n");
+    printf("  -o  Specifies the filename for the generated web shell (default `<random>.php`)\n");
+    printf("  -s  Specifies the PHP function to execute Unix commands (default \"passthru\")\n");
+    printf("  -u  Specifies the username to restrict access to a limit set of users\n");
+    printf("  -p  Specifies the password to restrict access to a limit set of users\n");
+    printf("  -l  Double-checks the consistency of the PHP code in generated file\n");
     printf("\n");
-    printf("Methods:\n");
-    printf("  set_interpreter        | Set the PHP shell interpreter: set_interpreter(shell_exec)\n");
-    printf("  get_interpreter        | Get the current PHP shell interpreter.\n");
-    printf("  get_disabled_functions | Get the list of functions disabled through a 'php.ini' file.\n");
-    printf("  get_php_version        | Get the version of the PHP interpreter in execution time.\n");
-    printf("  logout                 | Close the current shell session.\n");
-    printf("  status                 | Display all the configuration variables.\n");
-    printf("  cd new/folder/path/    | Change the current working directory.\n");
+    printf("Commands:\n");
+    printf("  set_interpreter         Sets the PHP function to execute commands, e.g. `set_interpreter shell_exec`\n");
+    printf("  get_interpreter         Prints the current PHP function acting as the interpreter\n");
+    printf("  interpreter             Alias for `get_interpreter`\n");
+    printf("  get_disabled_functions  Prints a list of disabled PHP functions to identify which shell functions are available\n");
+    printf("  disabled_functions      Alias for `get_disabled_functions`\n");
+    printf("  get_php_version         Prints the PHP version\n");
+    printf("  php_version             Alias for `get_php_version`\n");
+    printf("  cd                      Changes directories using `chdir`, e.g. `cd /var/log/`\n");
+    printf("  logout                  Terminates the user session and reloads the page\n");
+    printf("  exit                    Alias for `logout`\n");
+    printf("  status                  Prints the web shell configuration\n");
+    printf("  clear                   Resets the screen\n");
     printf("\n");
     printf("Usage:\n");
     printf("  phpshellgen\n");
@@ -118,10 +124,6 @@ $config = [
 ];
 
 $opts = getopt("i:o:s:u:p:hl");
-
-if (empty($opts)) {
-    _usage();
-}
 
 foreach ($opts as $name => $value) {
     switch ($name) {
