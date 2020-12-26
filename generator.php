@@ -143,7 +143,7 @@ foreach ($opts as $name => $value) {
             $config["password"] = $value;
             break;
         case "l": // lint
-            $config["lint"] = $value;
+            $config["lint"] = !$value;
             break;
         case "h": // help
             _usage();
@@ -234,5 +234,19 @@ if (empty($config["output"])) {
 }
 
 file_put_contents($config["output"], $out . "\n", LOCK_EX);
-// %x{php -l #{config[:output]}} if config[:lint]==true
+
+if ($config["lint"]) {
+    $results = [];
+    $code = 999;
+    exec(sprintf("php -l %s", $config["output"]), $results, $code);
+    if ($code !== 0) {
+        printf("-> Errors:");
+        foreach ($results as $line) {
+            printf("   \033[0;91m%s\033[0m\n", $line);
+        }
+        unlink($config["output"]);
+        exit(1);
+    }
+}
+
 printf("-> Finished\n");
