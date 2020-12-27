@@ -22,7 +22,6 @@ function _usage()
 {
     _header();
     printf("Options:\n");
-
     printf("  -h  Prints this message with a list of available options\n");
     printf("  -i  Specifies the file to serve as a template to generate the web shell (default \"template.txt\")\n");
     printf("  -o  Specifies the filename for the generated web shell (default `<random>.php`)\n");
@@ -72,7 +71,7 @@ function randomString(int $n = 0, bool $specialChars = false) : string
     ];
 
     if ($specialChars) {
-        $s = array_merge($s, ['@', '#', '$', '%', '&', '-', '+', '=']);
+        $s = array_merge($s, ['@', '#', '$', '%', '&', '-', '_', '+', '=']);
     }
 
     $b = openssl_random_pseudo_bytes($n);
@@ -150,9 +149,6 @@ foreach ($opts as $name => $value) {
     }
 }
 
-
-_header();
-
 $config["username_hash"] = password_hash($config["username"], PASSWORD_BCRYPT);
 $config["password_hash"] = password_hash($config["password"], PASSWORD_BCRYPT);
 
@@ -160,13 +156,19 @@ if (!array_key_exists("i", $opts)) {
     $opts["i"] = "template.txt";
 }
 
+if (!file_exists($opts["i"])) {
+    printf("%s does not exist\n", $opts["i"]);
+    exit(1);
+}
+
+_header();
 printf("-> Creating shell script: \033[0;94m%s\033[0m\n", $config["output"]);
-printf("   Randomizing PHP class name: \033[0;91mclass %s{...}\033[0m\n", $config["class_name"]);
+printf("   Randomizing PHP class name: \033[0;92mclass %s{...}\033[0m\n", $config["class_name"]);
+
+$out = "";
 
 // Read a user-provided template or the default template, if necessary.
 $lines = file($opts["i"], FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-$out = "";
 
 foreach ($lines as $line) {
     if (preg_match("/^\s*\/\//", $line) || preg_match("/^\s*(\/)?\*(\/)?/", $line)) {
